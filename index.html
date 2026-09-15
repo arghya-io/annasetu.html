@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Crop Procurement System</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- =====================================================
+         LANGUAGE SWITCHER
+         ===================================================== -->
+
+    <div class="language-switcher">
+      <button
+        id="languageToggle"
+        class="language-button"
+        type="button"
+        aria-label="Change language"
+      >
+        <span class="language-icon">🌐</span>
+        <span id="languageText">বাংলা</span>
+      </button>
+    </div>
+
+    <!-- =====================================================
+         BACKGROUND OVERLAY
+         ===================================================== -->
+
+    <div class="background-overlay"></div>
+
+    <!-- =====================================================
+         MAIN LOGIN SECTION
+         ===================================================== -->
+
+    <main class="login-container">
+      <!-- Welcome -->
+      <div class="welcome-section">
+        <div class="logo-circle">🌾</div>
+
+        <h1>Crop Procurement</h1>
+
+        <p>Smart procurement and queue management system</p>
+      </div>
+
+      <!-- ===================================================
+           LOGIN CARDS
+           =================================================== -->
+
+      <div class="login-cards">
+        <!-- FARMER LOGIN -->
+        <section class="login-card farmer-card" id="farmerCard">
+          <div class="card-icon">🌾</div>
+
+          <h2>Farmer Login</h2>
+
+          <p class="card-description">
+            Book procurement slots and manage your queue status.
+          </p>
+
+          <button
+            class="login-button farmer-button"
+            id="farmerLoginButton"
+            type="button"
+          >
+            Login as Farmer
+            <span>→</span>
+          </button>
+        </section>
+
+        <!-- ADMIN LOGIN -->
+        <section class="login-card admin-card" id="adminCard">
+          <div class="card-icon">🛡️</div>
+
+          <h2>Admin / Operator</h2>
+
+          <p class="card-description">
+            Monitor procurement centers, farmers and queue activity.
+          </p>
+
+          <button
+            class="login-button admin-button"
+            id="adminLoginButton"
+            type="button"
+          >
+            Login as Admin
+            <span>→</span>
+          </button>
+        </section>
+      </div>
+
+      <!-- ===================================================
+           IVR NOTICE
+           =================================================== -->
+
+      <div class="ivr-notice">
+        <span class="phone-icon"> 📞 </span>
+
+        <div>
+          <strong> Don't have a smartphone? </strong>
+
+          <p>
+            You can use our IVR service to book your procurement slot using a
+            keypad phone.
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================================================
+           FOOTER
+           =================================================== -->
+
+      <footer>
+        <p>Smart Crop Procurement System</p>
+
+        <p>Ministry of Consumer Affairs, Food & Public Distribution, India</p>
+      </footer>
+    </main>
+
+    <!-- =====================================================
+         FARMER LOGIN MODAL
+         ===================================================== -->
+
+    <div class="modal hidden" id="farmerModal">
+      <div class="modal-card">
+        <button
+          class="close-button"
+          id="closeFarmerModal"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+        <div class="modal-icon">📱</div>
+
+        <h2>Farmer Login</h2>
+
+        <p>Enter your registered mobile number to continue.</p>
+
+        <form id="farmerLoginForm">
+          <label for="farmerMobile"> Mobile Number </label>
+
+          <input
+            type="tel"
+            id="farmerMobile"
+            name="farmerMobile"
+            placeholder="Enter 10-digit mobile number"
+            maxlength="10"
+            inputmode="numeric"
+            required
+          />
+
+          <button type="submit" class="modal-submit farmer-submit">
+            Send OTP
+          </button>
+        </form>
+
+        <p class="demo-note">
+          OTP verification will be connected with Supabase later.
+        </p>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         ADMIN LOGIN MODAL
+         ===================================================== -->
+
+    <div class="modal hidden" id="adminModal">
+      <div class="modal-card">
+        <button
+          class="close-button"
+          id="closeAdminModal"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+        <div class="modal-icon">🔐</div>
+
+        <h2>Admin Login</h2>
+
+        <p>Authorized operators only.</p>
+
+        <form id="adminLoginForm">
+          <label for="adminId"> Admin ID </label>
+
+          <input
+            type="text"
+            id="adminId"
+            name="adminId"
+            placeholder="Enter Admin ID"
+            required
+          />
+
+          <label for="adminPassword"> Password </label>
+
+          <input
+            type="password"
+            id="adminPassword"
+            name="adminPassword"
+            placeholder="Enter password"
+            required
+          />
+
+          <button type="submit" class="modal-submit admin-submit">
+            Continue
+          </button>
+        </form>
+
+        <p class="demo-note">
+          Admin authentication will be connected with Supabase later.
+        </p>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         FARMER OTP SCREEN
+         ===================================================== -->
+
+    <section id="farmerOtpScreen" class="onboarding-screen hidden">
+      <div class="onboarding-card">
+        <div class="onboarding-icon">📱</div>
+
+        <h2>Verify Your Mobile Number</h2>
+
+        <p>We have sent a verification OTP to your mobile number.</p>
+
+        <label for="otpInput"> Enter OTP </label>
+
+        <input
+          type="text"
+          id="otpInput"
+          maxlength="6"
+          inputmode="numeric"
+          placeholder="Enter 6-digit OTP"
+        />
+
+        <button id="verifyOtpButton" type="button">Verify OTP</button>
+
+        <button id="backToLoginButton" class="secondary-button" type="button">
+          Back to Login
+        </button>
+
+        <p class="demo-note">
+          Demo OTP:
+          <strong>123456</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         NEW FARMER PROFILE
+         ===================================================== -->
+
+    <section id="newFarmerScreen" class="onboarding-screen hidden">
+      <div class="onboarding-card">
+        <div class="onboarding-icon">🌾</div>
+
+        <h2>Complete Your Profile</h2>
+
+        <p>Welcome! Please provide a few basic details to continue.</p>
+
+        <form id="newFarmerForm">
+          <label for="farmerName"> Full Name </label>
+
+          <input
+            type="text"
+            id="farmerName"
+            placeholder="Enter your full name"
+            required
+          />
+
+          <label for="farmerVillage"> Village </label>
+
+          <input
+            type="text"
+            id="farmerVillage"
+            placeholder="Enter your village"
+            required
+          />
+
+          <label for="farmerDistrict"> District </label>
+
+          <input
+            type="text"
+            id="farmerDistrict"
+            placeholder="Enter your district"
+            required
+          />
+
+          <button type="submit">Complete Profile</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FARMER DASHBOARD
+         ===================================================== -->
+
+    <section id="farmerDashboard" class="farmer-dashboard hidden">
+      <!-- ===================================================
+           DASHBOARD HEADER
+           =================================================== -->
+
+      <header class="dashboard-header">
+        <!-- Brand -->
+        <div class="dashboard-brand">
+          <div class="dashboard-brand-icon">🌾</div>
+
+          <div class="dashboard-brand-text">
+            <h2>Crop Procurement</h2>
+
+            <span> FARMER PROCUREMENT DESK </span>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="dashboard-actions">
+          <!-- Dashboard Language -->
+          <select
+            id="dashboardLanguage"
+            class="dashboard-language"
+            aria-label="Dashboard language"
+          >
+            <option value="en">English</option>
+
+            <option value="bn">বাংলা</option>
+
+            <option value="hi">हिंदी</option>
+          </select>
+
+          <!-- Farmer Profile -->
+          <div class="dashboard-profile">
+            <div class="profile-avatar">👨‍🌾</div>
+
+            <div class="profile-info">
+              <strong id="dashboardFarmerName"> Farmer </strong>
+
+              <span> Registered Farmer </span>
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <button type="button" class="dashboard-logout" id="dashboardLogout">
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <!-- ===================================================
+           LIVE MSP / CROP TICKER
+           =================================================== -->
+
+      <section class="crop-market-bar">
+        <div class="crop-market-header">
+          <span class="crop-market-title" id="cropTickerTitle">LIVE MSP 2026–27</span>
+          <span class="crop-market-live" id="cropTickerSourceLabel">GOVERNMENT BENCHMARKS</span>
+        </div>
+
+        <div class="crop-track" id="cropTrack"></div>
+
+        <div class="crop-market-controls">
+          <button type="button" class="crop-filter active" data-filter="all" id="cropFilterAll">All</button>
+          <button type="button" class="crop-filter" data-filter="kharif" id="cropFilterKharif">Kharif</button>
+          <button type="button" class="crop-filter" data-filter="rabi" id="cropFilterRabi">Rabi</button>
+          <button type="button" class="crop-filter" data-filter="commercial" id="cropFilterCommercial">Commercial</button>
+          <button type="button" id="cropPauseButton">Ⅱ Pause</button>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           DASHBOARD MAIN AREA
+           =================================================== -->
+
+      <main class="dashboard-main">
+        <!-- =================================================
+             WELCOME PANEL
+             ================================================= -->
+
+        <section class="dashboard-welcome">
+          <div class="dashboard-welcome-eyebrow">OFFICIAL FARMER DESK</div>
+
+          <h1>Farmer Procurement Dashboard</h1>
+
+          <p>
+            Welcome to your integrated crop procurement portal. Book procurement
+            slots, register your crop, track your queue position, and monitor
+            procurement status.
+          </p>
+        </section>
+
+        <!-- =================================================
+             PROCUREMENT SERVICES
+             ================================================= -->
+
+        <section class="dashboard-services">
+          <div class="services-heading">
+            <span class="services-eyebrow"> FARMER SERVICES </span>
+
+            <h3>Procurement Services</h3>
+
+            <p>Choose a service to manage your crop procurement journey.</p>
+          </div>
+
+          <!-- =================================================
+               SERVICE CARD GRID
+               ================================================= -->
+
+          <div class="modules-grid">
+            <!-- ===============================================
+                 FEATURE 01
+                 =============================================== -->
+
+            <div
+              class="module-card"
+              id="cardCropMsp"
+              data-module="crop-msp"
+              tabindex="0"
+              role="button"
+              aria-label="Open Crop and MSP Information"
+            >
+              <div class="module-icon-wrap icon-gold">🌾</div>
+
+              <span class="module-number"> 01 </span>
+
+              <h4 class="module-title">CROP & MSP INFORMATION</h4>
+
+              <p class="module-desc">
+                Check MSP, crop season, and procurement status before booking
+                your procurement slot.
+              </p>
+
+              <div class="module-action">
+                <span> View Information </span>
+
+                <span> → </span>
+              </div>
+            </div>
+
+            <!-- ===============================================
+     FEATURE 02 — PROCUREMENT SLOT BOOKING
+     =============================================== -->
+
+            <div
+              class="module-card"
+              id="cardProcurementSlot"
+              data-module="procurement-slot"
+              tabindex="0"
+              role="button"
+              aria-label="Open Procurement Slot Booking"
+            >
+              <div class="module-icon-wrap">📅</div>
+
+              <span class="module-number"> 02 </span>
+
+              <h4 class="module-title">PROCUREMENT SLOT BOOKING</h4>
+
+              <p class="module-desc">
+                Select a procurement center, delivery date, and available time
+                slot.
+              </p>
+
+              <div class="module-action">
+                <span> Book Slot </span>
+
+                <span> → </span>
+              </div>
+            </div>
+
+            <!-- ===============================================
+     FEATURE 03 — CROP / PRODUCE REGISTRATION
+     =============================================== -->
+
+            <div
+              class="module-card"
+              id="cardCropRegistration"
+              data-module="crop-registration"
+              tabindex="0"
+              role="button"
+              aria-label="Open Crop Registration"
+            >
+              <div class="module-icon-wrap">📝</div>
+
+              <span class="module-number">03</span>
+
+              <h4 class="module-title">CROP REGISTRATION</h4>
+
+              <p class="module-desc">
+                Register your produce details before booking procurement.
+              </p>
+
+              <div class="module-action">
+                <span>Register Crop</span>
+                <span>→</span>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 FEATURE 04
+                 =============================================== -->
+            <div
+              class="module-card"
+              id="cardTokenStatus"
+              data-module="token-status"
+              tabindex="0"
+              role="button"
+              aria-label="Open Token and Queue Status"
+            >
+              <div class="module-icon-wrap">🎟️</div>
+
+              <span class="module-number">04</span>
+
+              <h4 class="module-title">TOKEN & QUEUE STATUS</h4>
+
+              <p class="module-desc">
+                Track your procurement token, queue position, congestion, and
+                estimated waiting time.
+              </p>
+
+              <div class="module-action">
+                <span>View Queue Status</span>
+
+                <span>→</span>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 FEATURE 05
+                 =============================================== -->
+            <div
+              class="module-card"
+              id="cardProcurementPayment"
+              data-module="procurement-payment"
+              tabindex="0"
+              role="button"
+              aria-label="Open Procurement and Payment"
+            >
+              <div class="module-icon-wrap">💰</div>
+
+              <span class="module-number">05</span>
+
+              <h4 class="module-title">PROCUREMENT & PAYMENT</h4>
+
+              <p class="module-desc">
+                View final procurement details, MSP amount, and payment status.
+              </p>
+
+              <div class="module-action">
+                <span>View Procurement</span>
+                <span>→</span>
+              </div>
+            </div>
+
+            <div
+            class="module-card"
+            id="cardTransactionHistory"
+            data-module="transaction-history"
+            tabindex="0"
+            role="button"
+            aria-label="Open Transaction History"
+          >
+            <div class="module-icon-wrap">📜</div>
+          
+            <span class="module-number">06</span>
+          
+            <h4 class="module-title">TRANSACTION HISTORY</h4>
+          
+            <p class="module-desc">
+              View your previous procurement and payment records.
+            </p>
+          
+            <div class="module-action">
+              <span>View History</span>
+              <span>→</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- =================================================
+             FEATURE 01 — CROP & MSP MODAL
+             ================================================= -->
+
+        <div class="crop-msp-modal hidden" id="cropMspModal">
+          <!-- Overlay -->
+          <div class="crop-msp-overlay" id="cropMspOverlay"></div>
+
+          <!-- Modal Dialog -->
+          <div class="crop-msp-dialog">
+            <!-- ===============================================
+                 MODAL HEADER
+                 =============================================== -->
+
+            <div class="crop-msp-header">
+              <div>
+                <span class="crop-msp-eyebrow"> FARMER INFORMATION </span>
+
+                <h2>🌾 Crop & MSP Information</h2>
+
+                <p>Check crop season, MSP and current procurement status.</p>
+              </div>
+
+              <button
+                type="button"
+                class="crop-msp-close"
+                id="cropMspClose"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <!-- ===============================================
+                 CROP LIST VIEW
+                 =============================================== -->
+
+            <div id="cropMspListView">
+              <!-- Search + Filter -->
+
+              <div class="crop-msp-controls">
+                <!-- Search -->
+
+                <div class="crop-msp-search">
+                  <span> ⌕ </span>
+
+                  <input
+                    type="text"
+                    id="cropMspSearch"
+                    placeholder="Search crop..."
+                    autocomplete="off"
+                  />
+                </div>
+
+                <!-- Filters -->
+
+                <div class="crop-msp-filters">
+                  <button
+                    type="button"
+                    class="crop-msp-filter active"
+                    data-filter="all"
+                  >
+                    All
+                  </button>
+
+                  <button
+                    type="button"
+                    class="crop-msp-filter"
+                    data-filter="kharif"
+                  >
+                    Kharif
+                  </button>
+
+                  <button
+                    type="button"
+                    class="crop-msp-filter"
+                    data-filter="rabi"
+                  >
+                    Rabi
+                  </button>
+                  <button
+                    type="button"
+                    class="crop-msp-filter"
+                    data-filter="commercial"
+                  >
+                    Commercial
+                  </button>
+                </div>
+              </div>
+
+              <!-- Crop cards generated by crop-msp.js -->
+
+              <div class="crop-msp-grid" id="cropMspGrid"></div>
+
+              <!-- Source -->
+
+              <div class="crop-msp-source">
+                <span id="cropMspSourceLabel">Official source:</span>
+                <a
+                  id="cropMspOfficialLink"
+                  href="https://cacp.da.gov.in/Home/MSP"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Commission for Agricultural Costs & Prices (CACP)
+                </a>
+                <span class="crop-msp-sync-status" id="cropMspSyncStatus">
+                  Official 2026–27 snapshot
+                </span>
+              </div>
+            </div>
+
+            <!-- ===============================================
+                 CROP DETAILS VIEW
+                 =============================================== -->
+
+            <div class="crop-msp-details hidden" id="cropMspDetailsView">
+              <!-- Back -->
+
+              <button
+                type="button"
+                class="crop-details-back"
+                id="cropDetailsBack"
+              >
+                ← Back to Crops
+              </button>
+
+              <!-- Selected Crop -->
+
+              <div class="crop-details-main">
+                <div class="crop-details-icon" id="cropDetailsIcon">🌾</div>
+
+                <div>
+                  <span class="crop-details-season" id="cropDetailsSeason">
+                    KHARIF
+                  </span>
+
+                  <h2 id="cropDetailsName">Rice</h2>
+                </div>
+              </div>
+
+              <!-- MSP -->
+
+              <div class="crop-details-msp">
+                <span> Minimum Support Price </span>
+
+                <strong id="cropDetailsMsp"> ₹ — / quintal </strong>
+              </div>
+
+              <!-- Information -->
+
+              <div class="crop-details-info">
+                <div class="crop-detail-row">
+                  <span> Procurement Status </span>
+
+                  <strong id="cropDetailsStatus"> 🟢 Procurement Open </strong>
+                </div>
+
+                <div class="crop-detail-row">
+                  <span> Procurement Period </span>
+
+                  <strong id="cropDetailsPeriod"> — </strong>
+                </div>
+
+                <div class="crop-detail-row">
+                  <span> Crop Year </span>
+
+                  <strong id="cropDetailsYear"> 2026–27 </strong>
+                </div>
+
+                <div class="crop-detail-row">
+                  <span> Last Updated </span>
+
+                  <strong id="cropDetailsUpdated"> — </strong>
+                </div>
+              </div>
+
+              <!-- Main Action -->
+
+              <button
+                type="button"
+                class="crop-details-book"
+                id="cropDetailsBook"
+              >
+                Book Procurement Slot
+
+                <span> → </span>
+              </button>
+
+              <!-- Data Source -->
+
+              <div class="crop-details-source">
+                <span id="cropDetailsSourceText">
+                  Information based on official MSP data.
+                </span>
+                <a
+                  href="https://cacp.da.gov.in/Home/MSP"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  id="cropDetailsOfficialLink"
+                >
+                  Check official CACP MSP page ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- =================================================
+             FEATURE 02 — PROCUREMENT CENTER & SLOT BOOKING
+             ================================================= -->
+
+        <div class="procurement-slot-modal hidden" id="procurementSlotModal">
+          <div
+            class="procurement-slot-overlay"
+            id="procurementSlotOverlay"
+          ></div>
+
+          <div class="procurement-slot-dialog">
+            <div class="procurement-slot-header">
+              <div>
+                <span class="procurement-slot-eyebrow"> FARMER SERVICES </span>
+
+                <h2>📅 Procurement Slot Booking</h2>
+
+                <p>Select your procurement center, date, and intake slot.</p>
+              </div>
+
+              <button
+                type="button"
+                class="procurement-slot-close"
+                id="procurementSlotClose"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="procurement-slot-content">
+              <!-- Selected Crop -->
+              <div class="booking-selected-crop" id="bookingSelectedCrop">
+                <div class="booking-selected-crop-icon" id="bookingCropIcon">
+                  🌾
+                </div>
+
+                <div class="booking-selected-crop-info">
+                  <span>Selected Crop</span>
+                  <strong id="bookingCropName">—</strong>
+                </div>
+              </div>
+              <div class="booking-section">
+                <label class="booking-label" for="procurementCenter">
+                  Procurement Center
+                </label>
+
+                <select id="procurementCenter" class="booking-select">
+                  <option value="">Select a procurement center</option>
+
+                  <option value="central">Central Procurement Center</option>
+
+                  <option value="north">North Procurement Center</option>
+
+                  <option value="south">South Procurement Center</option>
+                </select>
+              </div>
+
+              <div class="booking-section">
+                <label class="booking-label" for="procurementDate">
+                  Preferred Date
+                </label>
+
+                <input type="date" id="procurementDate" class="booking-input" />
+              </div>
+
+              <div class="booking-section">
+                <div class="booking-label">Select Intake Slot</div>
+
+                <div class="booking-slots">
+                  <button
+                    type="button"
+                    class="booking-slot"
+                    data-slot="morning"
+                  >
+                    <div class="booking-slot-top">
+                      <span class="booking-slot-name"> Morning </span>
+
+                      <span class="booking-slot-time">
+                        8:00 AM – 12:00 PM
+                      </span>
+                    </div>
+
+                    <div class="booking-slot-availability">
+                      24 slots available
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="booking-slot"
+                    data-slot="afternoon"
+                  >
+                    <div class="booking-slot-top">
+                      <span class="booking-slot-name"> Afternoon </span>
+
+                      <span class="booking-slot-time"> 1:00 PM – 5:00 PM </span>
+                    </div>
+
+                    <div class="booking-slot-availability">
+                      18 slots available
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="booking-summary hidden" id="bookingSummary">
+                <div class="booking-summary-title">Booking Summary</div>
+
+                <div class="booking-summary-row">
+                  <span>Center</span>
+                  <strong id="summaryCenter">—</strong>
+                </div>
+
+                <div class="booking-summary-row">
+                  <span>Date</span>
+                  <strong id="summaryDate">—</strong>
+                </div>
+
+                <div class="booking-summary-row">
+                  <span>Time Slot</span>
+                  <strong id="summarySlot">—</strong>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                class="booking-confirm-button"
+                id="confirmProcurementBooking"
+              >
+                Confirm Reservation
+                <span>→</span>
+              </button>
+
+              <p class="booking-note">
+                Your booking confirmation and queue token will be generated
+                after reservation.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- ===============================================
+     FEATURE 03 — CROP / PRODUCE REGISTRATION
+     =============================================== -->
+
+        <div class="crop-registration-modal hidden" id="cropRegistrationModal">
+          <div
+            class="crop-registration-overlay"
+            id="cropRegistrationOverlay"
+          ></div>
+
+          <div class="crop-registration-dialog">
+            <!-- HEADER -->
+            <div class="crop-registration-header">
+              <div>
+                <span class="crop-registration-eyebrow"> FARMER SERVICES </span>
+
+                <h2>📝 Crop Registration</h2>
+
+                <p>Register your produce details for procurement.</p>
+              </div>
+
+              <button
+                type="button"
+                class="crop-registration-close"
+                id="cropRegistrationClose"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="crop-registration-content">
+              <!-- FARMER INFORMATION -->
+              <div class="registration-section">
+                <div class="registration-section-title">Farmer Information</div>
+
+                <div class="registration-grid">
+                  <div class="registration-field">
+                    <label
+                      class="registration-label"
+                      for="registrationFarmerName"
+                    >
+                      Farmer Name
+                    </label>
+
+                    <input
+                      type="text"
+                      id="registrationFarmerName"
+                      class="registration-input"
+                      placeholder="Enter farmer name"
+                    />
+                  </div>
+
+                  <div class="registration-field">
+                    <label class="registration-label" for="registrationMobile">
+                      Mobile Number
+                    </label>
+
+                    <input
+                      type="tel"
+                      id="registrationMobile"
+                      class="registration-input"
+                      placeholder="Enter mobile number"
+                      maxlength="10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- CROP INFORMATION -->
+              <div class="registration-section">
+                <div class="registration-section-title">
+                  Produce Information
+                </div>
+
+                <!-- SELECTED CROP -->
+                <div
+                  class="registration-selected-crop"
+                  id="registrationSelectedCrop"
+                >
+                  <div class="registration-crop-icon" id="registrationCropIcon">
+                    🌾
+                  </div>
+
+                  <div class="registration-crop-info">
+                    <span>Selected Crop</span>
+
+                    <strong id="registrationCropName"> — </strong>
+                  </div>
+                </div>
+
+                <!-- QUANTITY -->
+                <div class="registration-field">
+                  <label class="registration-label" for="expectedQuantity">
+                    Expected Quantity
+                  </label>
+
+                  <div class="registration-input-with-unit">
+                    <input
+                      type="number"
+                      id="expectedQuantity"
+                      class="registration-input"
+                      placeholder="Enter quantity"
+                      min="1"
+                    />
+
+                    <span>Quintals</span>
+                  </div>
+                </div>
+
+                <!-- HARVEST DATE -->
+                <div class="registration-field">
+                  <label class="registration-label" for="harvestDate">
+                    Harvest / Ready Date
+                  </label>
+
+                  <input
+                    type="date"
+                    id="harvestDate"
+                    class="registration-input"
+                  />
+                </div>
+
+                <!-- LAND REFERENCE -->
+                <div class="registration-field">
+                  <label class="registration-label" for="landReference">
+                    Land / Plot Reference
+                  </label>
+
+                  <input
+                    type="text"
+                    id="landReference"
+                    class="registration-input"
+                    placeholder="Enter land or plot reference"
+                  />
+                </div>
+              </div>
+
+              <!-- INFORMATION NOTE -->
+              <div class="registration-info-note">
+                <span>ℹ️</span>
+
+                <p>
+                  Your crop details will be used to prepare your procurement
+                  booking and queue information.
+                </p>
+              </div>
+
+              <!-- SUBMIT -->
+              <button
+                type="button"
+                class="registration-submit-button"
+                id="submitCropRegistration"
+              >
+                Submit Crop Registration
+                <span>→</span>
+              </button>
+
+              <p class="registration-note">
+                Payment and bank details are handled separately during the
+                procurement payment process.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- =================================================
+     FEATURE 05 — PROCUREMENT & PAYMENT
+     ================================================= -->
+
+        <div
+          class="procurement-payment-modal hidden"
+          id="procurementPaymentModal"
+        >
+          <div
+            class="procurement-payment-overlay"
+            id="procurementPaymentOverlay"
+          ></div>
+
+          <div class="procurement-payment-dialog">
+            <!-- HEADER -->
+            <div class="procurement-payment-header">
+              <div>
+                <span class="procurement-payment-eyebrow">
+                  FARMER SERVICES
+                </span>
+
+                <h2>💰 Finalize Procurement & Payment</h2>
+
+                <p>Review your final procurement details and payment status.</p>
+              </div>
+
+              <button
+                type="button"
+                class="procurement-payment-close"
+                id="procurementPaymentClose"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="procurement-payment-content">
+              <!-- =========================================
+         SECTION 1 — PROCUREMENT SUMMARY
+         ========================================= -->
+
+              <section class="procurement-summary-card">
+                <div class="payment-section-heading">
+                  <span class="payment-section-eyebrow">
+                    PROCUREMENT RESULT
+                  </span>
+
+                  <h3>Final Procurement Summary</h3>
+                </div>
+
+                <div class="procurement-summary-status">
+                  <span class="procurement-summary-status-icon" id="procurementStatusIcon"> ⏳ </span>
+
+                  <div>
+                    <strong id="procurementStatusTitle">Booking Confirmed</strong>
+
+                    <span id="procurementStatusDesc">
+                      Your booking is on record. Details below update once the center checks you in.
+                    </span>
+                  </div>
+                </div>
+
+                <div class="procurement-summary-details">
+                  <div class="procurement-summary-item">
+                    <span>Crop</span>
+
+                    <strong id="paymentCropName"> — </strong>
+                  </div>
+
+                  <div class="procurement-summary-item">
+                    <span>Procurement Center</span>
+
+                    <strong id="paymentCenterName">
+                      —
+                    </strong>
+                  </div>
+
+                  <div class="procurement-summary-item">
+                    <span>Procurement Date</span>
+
+                    <strong id="paymentProcurementDate"> — </strong>
+                  </div>
+
+                  <div class="procurement-summary-item">
+                    <span>Token</span>
+
+                    <strong id="paymentTokenId"> — </strong>
+                  </div>
+                </div>
+              </section>
+              <!-- SECTION 2 — FINAL QUANTITY & MSP -->
+
+              <section class="procurement-amount-card">
+                <div class="payment-section-heading">
+                  <span class="payment-section-eyebrow"> MSP CALCULATION </span>
+
+                  <h3>Final Quantity & Procurement Amount</h3>
+                </div>
+
+                <div class="procurement-amount-details">
+                  <div class="procurement-amount-item">
+                    <span>Final Accepted Quantity</span>
+
+                    <strong id="paymentFinalQuantity"> Pending weigh-in </strong>
+                  </div>
+
+                  <div class="procurement-amount-item">
+                    <span>MSP per Quintal</span>
+
+                    <strong id="paymentMspRate"> — </strong>
+                  </div>
+                </div>
+
+                <div class="procurement-total-box">
+                  <div>
+                    <span>Total Procurement Amount</span>
+
+                    <small> Final quantity × MSP </small>
+                  </div>
+
+                  <strong id="paymentTotalAmount"> — </strong>
+                </div>
+              </section>
+              <!-- SECTION 4 — PAYMENT STATUS -->
+
+              <section class="payment-status-card">
+                <div class="payment-section-heading">
+                  <span class="payment-section-eyebrow">
+                    PAYMENT TRACKING
+                  </span>
+
+                  <h3>Payment Status</h3>
+                </div>
+
+                <div class="payment-status-main">
+                  <div class="payment-status-icon" id="paymentStatusIcon">⏳</div>
+
+                  <div class="payment-status-info">
+                    <span> Current Payment Status </span>
+
+                    <strong id="paymentStatus"> Awaiting Procurement </strong>
+
+                    <p id="paymentStatusDescription">
+                      Your payment will be held and processed once the
+                      center confirms your procurement.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="payment-status-progress">
+                  <div class="payment-progress-step" id="paymentProgressStep1">
+                    <div class="payment-progress-dot">1</div>
+
+                    <span> Procurement Completed </span>
+                  </div>
+
+                  <div class="payment-progress-line" id="paymentProgressLine1"></div>
+
+                  <div class="payment-progress-step" id="paymentProgressStep2">
+                    <div class="payment-progress-dot">2</div>
+
+                    <span> Payment On Hold </span>
+                  </div>
+
+                  <div class="payment-progress-line" id="paymentProgressLine2"></div>
+
+                  <div class="payment-progress-step" id="paymentProgressStep3">
+                    <div class="payment-progress-dot">3</div>
+
+                    <span> Payment Credited </span>
+                  </div>
+                </div>
+
+                <div class="payment-status-note">
+                  <span>ℹ️</span>
+
+                  <span>
+                    Payment is held as pending until the center confirms your
+                    procurement, then released once your UPI/bank payout is processed.
+                  </span>
+                </div>
+              </section>
+              <!-- SECTION 5 — CONFIRMATION & NEXT STEPS -->
+
+              <section class="payment-confirmation-card">
+                <div class="payment-confirmation-icon">✓</div>
+
+                <div class="payment-confirmation-content">
+                  <span class="payment-section-eyebrow">
+                    PROCUREMENT CONFIRMATION
+                  </span>
+
+                  <h3>Procurement Details Finalized</h3>
+
+                  <p>
+                    Your procurement details have been finalized successfully.
+                    Payment will be initiated to your registered DBT account.
+                  </p>
+                </div>
+
+                <div class="payment-next-steps">
+                  <div class="payment-next-step">
+                    <span class="payment-next-step-icon"> 📱 </span>
+
+                    <div>
+                      <strong> Track Payment Status </strong>
+
+                      <span>
+                        Check this section for future payment updates.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="payment-next-step">
+                    <span class="payment-next-step-icon"> 🔔 </span>
+
+                    <div>
+                      <strong> Receive Notifications </strong>
+
+                      <span>
+                        Payment updates can be sent through SMS or IVR.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="payment-confirmation-note">
+                  <span>ℹ️</span>
+
+                  <span>
+                    Keep your booking ID and procurement token for future
+                    reference.
+                  </span>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <!-- FEATURE 04 — TOKEN & CONGESTION -->
+        <div class="token-status-modal hidden" id="tokenStatusModal">
+          <div class="token-status-overlay" id="tokenStatusOverlay"></div>
+
+          <div class="token-status-dialog">
+            <div class="token-status-header">
+              <div>
+                <span class="token-status-eyebrow"> FARMER SERVICES </span>
+
+                <h2>🎟️ Live Token & Queue</h2>
+
+                <p>Track your procurement token and queue progress.</p>
+              </div>
+
+              <button
+                type="button"
+                class="token-status-close"
+                id="tokenStatusClose"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="token-status-content">
+              <!-- Shown instead of everything below when this browser has no active booking -->
+              <div class="token-empty-state hidden" id="tokenEmptyState">
+                <div class="token-empty-icon">🎟️</div>
+                <h3>No active booking yet</h3>
+                <p>Book a procurement slot to see your live token and queue status here.</p>
+              </div>
+
+              <div class="token-live-sections" id="tokenLiveSections">
+              <!-- SECTION 1: YOUR TOKEN -->
+              <section class="token-card">
+                <div class="token-card-label">YOUR PROCUREMENT TOKEN</div>
+
+                <div class="token-card-number">—</div>
+
+                <div class="token-card-details">
+                  <div class="token-detail">
+                    <span>Crop</span>
+                    <strong>—</strong>
+                  </div>
+
+                  <div class="token-detail">
+                    <span>Center</span>
+                    <strong>—</strong>
+                  </div>
+
+                  <div class="token-detail">
+                    <span>Date</span>
+                    <strong>—</strong>
+                  </div>
+
+                  <div class="token-detail">
+                    <span>Slot</span>
+                    <strong>—</strong>
+                  </div>
+                </div>
+              </section>
+              <!-- SECTION 2: LIVE QUEUE -->
+              <section class="queue-position-card">
+                <div class="queue-section-heading">
+                  <div>
+                    <span class="queue-section-eyebrow"> LIVE QUEUE </span>
+
+                    <h3>Your Queue Position</h3>
+                  </div>
+
+                  <span class="queue-live-badge"> ● LIVE </span>
+                </div>
+
+                <div class="queue-position-main">
+                  <div class="queue-position-number">—</div>
+
+                  <div class="queue-position-info">
+                    <span>Your current position</span>
+                    <strong>—</strong>
+                  </div>
+                </div>
+
+                <div class="queue-current-status">
+                  <div class="queue-status-icon">⚖️</div>
+
+                  <div class="queue-status-info">
+                    <span>Currently serving</span>
+                    <strong>No one checked in yet</strong>
+                  </div>
+                </div>
+
+                <div class="queue-moving-status" id="queueMovingStatus">
+                  <span class="queue-status-dot"></span>
+                  <span id="queueMovingStatusText">
+                    Queue is moving normally
+                  </span>
+                </div>
+              </section>
+              <!-- SECTION 3: CONGESTION INTELLIGENCE -->
+              <section class="congestion-card">
+                <div class="congestion-heading">
+                  <div>
+                    <span class="congestion-eyebrow">
+                      CENTER INTELLIGENCE
+                    </span>
+
+                    <h3>Procurement Center Congestion</h3>
+                  </div>
+
+                  <span class="congestion-live-badge"> ● LIVE </span>
+                </div>
+
+                <div class="congestion-level">
+                  <div class="congestion-level-icon" id="congestionLevelIcon">
+                    ⚪
+                  </div>
+
+                  <div class="congestion-level-info">
+                    <span>Current Congestion</span>
+
+                    <strong id="congestionLevel">—</strong>
+
+                    <p id="congestionDescription">—</p>
+                  </div>
+                </div>
+
+                <div class="congestion-metrics">
+                  <div class="congestion-metric">
+                    <span class="congestion-metric-icon"> 👨‍🌾 </span>
+
+                    <div>
+                      <strong>—</strong>
+                      <span>Farmers waiting</span>
+                    </div>
+                  </div>
+
+                  <div class="congestion-metric">
+                    <span class="congestion-metric-icon"> ⚖️ </span>
+
+                    <div>
+                      <strong>—</strong>
+                      <span>Counters active</span>
+                    </div>
+                  </div>
+
+                  <div class="congestion-metric">
+                    <span class="congestion-metric-icon"> ⏱️ </span>
+
+                    <div>
+                      <strong>—</strong>
+                      <span>Avg. processing</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="congestion-explanation">
+                  <span>ℹ️</span>
+
+                  <p>
+                    Congestion is estimated from current queue volume, active
+                    processing counters, and average processing time.
+                  </p>
+                </div>
+              </section>
+              <!-- SECTION 4: ESTIMATED WAIT -->
+              <section class="estimated-wait-card">
+                <div class="estimated-wait-heading">
+                  <span class="estimated-wait-eyebrow">
+                    YOUR ESTIMATED WAIT
+                  </span>
+
+                  <span class="estimated-wait-icon"> ⏱️ </span>
+                </div>
+
+                <div class="estimated-wait-main">
+                  <strong class="estimated-wait-time" id="estimatedWaitTime">
+                    —
+                  </strong>
+
+                  <span class="estimated-wait-unit"> minutes </span>
+                </div>
+
+                <p class="estimated-wait-description">
+                  Based on your queue position,active counters and the current
+                  center processing speed.
+                </p>
+
+                <div class="estimated-wait-note">
+                  <span>ℹ️</span>
+                  <span
+                    >This is an estimated waiting time and may change as the
+                    queue moves.</span
+                  >
+                </div>
+              </section>
+              <!-- SECTION 5: QUEUE PROGRESS -->
+              <section class="queue-progress-card">
+                <div class="queue-progress-heading">
+                  <div>
+                    <span class="queue-progress-eyebrow">
+                      PROCUREMENT JOURNEY
+                    </span>
+
+                    <h3>Your Current Status</h3>
+                  </div>
+                </div>
+
+                <div class="queue-progress">
+                  <div class="queue-progress-step">
+                    <div class="queue-progress-dot">1</div>
+
+                    <div class="queue-progress-info">
+                      <strong>Booked</strong>
+                      <span>Slot successfully reserved</span>
+                    </div>
+                  </div>
+
+                  <div class="queue-progress-line"></div>
+
+                  <div class="queue-progress-step">
+                    <div class="queue-progress-dot">2</div>
+
+                    <div class="queue-progress-info">
+                      <strong>Waiting</strong>
+                      <span>You are currently in the queue</span>
+                    </div>
+                  </div>
+
+                  <div class="queue-progress-line"></div>
+
+                  <div class="queue-progress-step">
+                    <div class="queue-progress-dot">3</div>
+
+                    <div class="queue-progress-info">
+                      <strong>Processing</strong>
+                      <span>Your produce will be processed</span>
+                    </div>
+                  </div>
+
+                  <div class="queue-progress-line"></div>
+
+                  <div class="queue-progress-step">
+                    <div class="queue-progress-dot">4</div>
+
+                    <div class="queue-progress-info">
+                      <strong>Completed</strong>
+                      <span>Procurement completed</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              </div>
+              <!-- /.token-live-sections -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+<!-- FEATURE 06 — TRANSACTION HISTORY -->
+<div class="transaction-history-modal hidden" id="transactionHistoryModal">
+
+  <div
+    class="transaction-history-overlay"
+    id="transactionHistoryOverlay"
+  ></div>
+
+  <div class="transaction-history-dialog">
+
+    <!-- Header -->
+    <div class="transaction-history-header">
+
+      <div>
+        <span class="transaction-history-eyebrow">
+          FARMER SERVICES
+        </span>
+
+        <h2>📜 Transaction History</h2>
+
+        <p>
+          View your previous procurement and payment records.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="transaction-history-close"
+        id="transactionHistoryClose"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <!-- Content -->
+    <div class="transaction-history-content">
+
+      <!-- Summary -->
+      <section class="transaction-history-summary">
+
+        <div class="transaction-summary-item">
+          <span>Total Transactions</span>
+          <strong id="totalTransactions">0</strong>
+        </div>
+
+        <div class="transaction-summary-item">
+          <span>Total Quantity</span>
+          <strong id="totalTransactionQuantity">
+            —
+          </strong>
+        </div>
+
+        <div class="transaction-summary-item">
+          <span>Total Procurement Value</span>
+          <strong id="totalProcurementValue">
+            —
+          </strong>
+        </div>
+
+      </section>
+
+
+      <!-- Transaction List -->
+      <section class="transaction-list-section">
+
+        <div class="transaction-list-heading">
+
+          <div>
+            <span class="transaction-list-eyebrow">
+              PROCUREMENT RECORDS
+            </span>
+
+            <h3>Your Transactions</h3>
+          </div>
+
+        </div>
+
+
+        <!-- Transaction Card -->
+        <article class="transaction-card">
+
+          <div class="transaction-card-header">
+
+            <div class="transaction-crop">
+
+              <div class="transaction-crop-icon">
+                🌾
+              </div>
+
+              <div>
+                <span>Crop</span>
+                <strong id="transactionCropName">
+                  —
+                </strong>
+              </div>
+
+            </div>
+
+            <span
+              class="transaction-payment-badge"
+              id="transactionPaymentStatus"
+            >
+              —
+            </span>
+
+          </div>
+
+
+          <div class="transaction-card-details">
+
+            <div class="transaction-detail">
+              <span>Date</span>
+              <strong id="transactionDate">
+                —
+              </strong>
+            </div>
+
+            <div class="transaction-detail">
+              <span>Procurement Center</span>
+              <strong id="transactionCenter">
+                —
+              </strong>
+            </div>
+
+            <div class="transaction-detail">
+              <span>Accepted Quantity</span>
+              <strong id="transactionQuantity">
+                —
+              </strong>
+            </div>
+
+            <div class="transaction-detail">
+              <span>MSP Applied</span>
+              <strong id="transactionMsp">
+                —
+              </strong>
+            </div>
+
+          </div>
+
+
+          <!-- Amount -->
+          <div class="transaction-amount">
+
+            <span>Procurement Amount</span>
+
+            <strong id="transactionAmount">
+              —
+            </strong>
+
+          </div>
+
+
+          <!-- Reference -->
+          <div class="transaction-reference">
+
+            <div>
+              <span>Token</span>
+              <strong id="transactionToken">
+                —
+              </strong>
+            </div>
+
+            <div>
+              <span>Booking Reference</span>
+              <strong id="transactionBookingId">
+                —
+              </strong>
+            </div>
+
+          </div>
+
+        </article>
+
+      </section>
+
+
+      <!-- Empty State -->
+      <section
+        class="transaction-empty-state hidden"
+        id="transactionEmptyState"
+      >
+
+        <div class="transaction-empty-icon">
+          📜
+        </div>
+
+        <h3>No Transactions Yet</h3>
+
+        <p>
+          Your completed procurement records will appear here.
+        </p>
+
+      </section>
+
+    </div>
+
+  </div>
+
+</div>
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+
+    <script type="module" src="js/booking-sync.js"></script>
+    <script src="script.js"></script>
+    <script>
+      /* =========================================================
+         FEATURE 01 — CROP & MSP INFORMATION
+         ========================================================= */
+
+      const cropMspData = [
+  {
+    "name": "Rice",
+    "icon": "🌾",
+    "season": "kharif",
+    "seasonLabel": "KHARIF",
+    "msp": 2441,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Jute",
+    "icon": "🌿",
+    "season": "commercial",
+    "seasonLabel": "COMMERCIAL",
+    "msp": 5925,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Maize",
+    "icon": "🌽",
+    "season": "kharif",
+    "seasonLabel": "KHARIF",
+    "msp": 2410,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Wheat",
+    "icon": "🌾",
+    "season": "rabi",
+    "seasonLabel": "RABI",
+    "msp": 2585,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Mustard",
+    "icon": "🌱",
+    "season": "rabi",
+    "seasonLabel": "RABI",
+    "msp": 6200,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Groundnut",
+    "icon": "🥜",
+    "season": "kharif",
+    "seasonLabel": "KHARIF",
+    "msp": 7517,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Sunflower",
+    "icon": "🌻",
+    "season": "kharif",
+    "seasonLabel": "KHARIF",
+    "msp": 8343,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  },
+  {
+    "name": "Gram",
+    "icon": "🫘",
+    "season": "rabi",
+    "seasonLabel": "RABI",
+    "msp": 5875,
+    "status": "Procurement Open",
+    "period": "2026–27"
+  }
+];
+
+/* =========================================================
+         GET ELEMENTS
+         ========================================================= */
+
+      const cardCropMsp = document.getElementById("cardCropMsp");
+
+      const cropMspModal = document.getElementById("cropMspModal");
+      const cropMspOverlay = document.getElementById("cropMspOverlay");
+      const cropMspClose = document.getElementById("cropMspClose");
+
+      const cropMspListView = document.getElementById("cropMspListView");
+      const cropMspDetailsView = document.getElementById("cropMspDetailsView");
+
+      const cropMspGrid = document.getElementById("cropMspGrid");
+      const cropMspSearch = document.getElementById("cropMspSearch");
+
+      const cropMspFilters = document.querySelectorAll(".crop-msp-filter");
+
+      const cropDetailsBack = document.getElementById("cropDetailsBack");
+
+      const cropDetailsIcon = document.getElementById("cropDetailsIcon");
+
+      const cropDetailsName = document.getElementById("cropDetailsName");
+
+      const cropDetailsSeason = document.getElementById("cropDetailsSeason");
+
+      const cropDetailsMsp = document.getElementById("cropDetailsMsp");
+
+      const cropDetailsStatus = document.getElementById("cropDetailsStatus");
+
+      const cropDetailsPeriod = document.getElementById("cropDetailsPeriod");
+
+      const cropDetailsUpdated = document.getElementById("cropDetailsUpdated");
+
+      const cropDetailsBook = document.getElementById("cropDetailsBook");
+
+      let selectedCropSeason = "all";
+
+      /* =========================================================
+         RENDER CROP CARDS
+         ========================================================= */
+
+      window.renderCropMspCards = function renderCropMspCards() {
+        if (!cropMspGrid) return;
+
+        const searchText = cropMspSearch
+          ? cropMspSearch.value.trim().toLowerCase()
+          : "";
+
+        const filteredCrops = cropMspData.filter(function(crop) {
+          const localizedName =
+            (typeof cropNameTranslations !== "undefined" &&
+             cropNameTranslations[currentLanguage] &&
+             cropNameTranslations[currentLanguage][crop.name]) ||
+            crop.name;
+
+          const matchesSearch =
+            crop.name.toLowerCase().includes(searchText) ||
+            localizedName.toLowerCase().includes(searchText);
+
+          const matchesSeason =
+            selectedCropSeason === "all" ||
+            crop.season === selectedCropSeason;
+
+          return matchesSearch && matchesSeason;
+        });
+
+        cropMspGrid.innerHTML = "";
+
+        if (filteredCrops.length === 0) {
+          cropMspGrid.innerHTML = `
+            <div style="
+              grid-column: 1 / -1;
+              padding: 35px 10px;
+              text-align: center;
+              color: #7c8780;
+              font-size: 12px;
+            ">
+              ${currentLanguage === "bn" ? "কোনও ফসল পাওয়া যায়নি।" :
+                currentLanguage === "hi" ? "कोई फसल नहीं मिली।" :
+                "No crops found."}
+            </div>
+          `;
+          return;
+        }
+
+        const map =
+          (typeof cropNameTranslations !== "undefined"
+            ? cropNameTranslations[currentLanguage]
+            : null) || {};
+
+        const seasonLabels = {
+          en: {kharif:"KHARIF", rabi:"RABI", commercial:"COMMERCIAL"},
+          bn: {kharif:"খরিফ", rabi:"রবি", commercial:"বাণিজ্যিক"},
+          hi: {kharif:"खरीफ", rabi:"रबी", commercial:"वाणिज्यिक"}
+        };
+
+        const label = dashboardTranslations[currentLanguage] || dashboardTranslations.en;
+
+        filteredCrops.forEach(function(crop) {
+          const card = document.createElement("div");
+          card.className = "crop-msp-card";
+          card.setAttribute("data-crop-key", crop.name);
+
+          const localizedName = map[crop.name] || crop.name;
+          const localizedSeason =
+            (seasonLabels[currentLanguage] || seasonLabels.en)[crop.season] ||
+            crop.seasonLabel;
+
+          card.innerHTML = `
+            <div class="crop-msp-card-top">
+              <div class="crop-msp-card-icon">${crop.icon}</div>
+              <span class="crop-msp-season">${localizedSeason}</span>
+            </div>
+
+            <h3 class="crop-msp-card-name">${localizedName}</h3>
+
+            <span class="crop-msp-price-label">
+              ${label["Minimum Support Price"] || "Minimum Support Price"}
+            </span>
+
+            <div>
+              <span class="crop-msp-price">
+                ₹${Number(crop.msp).toLocaleString("en-IN")}
+              </span>
+              <span class="crop-msp-price-unit">
+                / ${currentLanguage === "bn" ? "কুইন্টাল" :
+                    currentLanguage === "hi" ? "क्विंटल" : "quintal"}
+              </span>
+            </div>
+
+            <div class="crop-msp-status">
+              <span class="crop-msp-status-dot"></span>
+              ${crop.status}
+            </div>
+
+            <div class="crop-msp-view">
+              <span>${label["View Details"] || "View Details"}</span>
+              <span>→</span>
+            </div>
+          `;
+
+          card.addEventListener("click", function() {
+            showCropDetails(crop);
+          });
+
+          cropMspGrid.appendChild(card);
+        });
+      };
+
+      /* =========================================================
+         OPEN MODAL
+         ========================================================= */
+
+      function openCropMspModal() {
+        if (!cropMspModal) {
+          return;
+        }
+
+        cropMspModal.classList.remove("hidden");
+
+        if (cropMspListView) {
+          cropMspListView.classList.remove("hidden");
+        }
+
+        if (cropMspDetailsView) {
+          cropMspDetailsView.classList.add("hidden");
+        }
+
+        selectedCropSeason = "all";
+
+        if (cropMspSearch) {
+          cropMspSearch.value = "";
+        }
+
+        cropMspFilters.forEach(function (button) {
+          button.classList.remove("active");
+        });
+
+        const allButton = document.querySelector(
+          '.crop-msp-filter[data-filter="all"]'
+        );
+
+        if (allButton) {
+          allButton.classList.add("active");
+        }
+
+        renderCropMspCards();
+
+        document.body.style.overflow = "hidden";
+      }
+
+      /* =========================================================
+         CLOSE MODAL
+         ========================================================= */
+
+      function closeCropMspModal() {
+        if (!cropMspModal) {
+          return;
+        }
+
+        cropMspModal.classList.add("hidden");
+
+        document.body.style.overflow = "";
+      }
+
+      /* =========================================================
+         SHOW CROP DETAILS
+         ========================================================= */
+
+      function showCropDetails(crop) {
+        if (cropMspListView) cropMspListView.classList.add("hidden");
+        if (cropMspDetailsView) cropMspDetailsView.classList.remove("hidden");
+
+        const map =
+          (typeof cropNameTranslations !== "undefined"
+            ? cropNameTranslations[currentLanguage]
+            : null) || {};
+
+        const seasonLabels = {
+          en: {kharif:"KHARIF", rabi:"RABI", commercial:"COMMERCIAL"},
+          bn: {kharif:"খরিফ", rabi:"রবি", commercial:"বাণিজ্যিক"},
+          hi: {kharif:"खरीफ", rabi:"रबी", commercial:"वाणिज्यिक"}
+        };
+
+        const label = dashboardTranslations[currentLanguage] || dashboardTranslations.en;
+
+        if (cropDetailsIcon) cropDetailsIcon.textContent = crop.icon;
+
+        if (cropDetailsName) {
+          cropDetailsName.textContent = map[crop.name] || crop.name;
+          cropDetailsName.setAttribute("data-crop-key", crop.name);
+        }
+
+        if (cropDetailsSeason) {
+          cropDetailsSeason.textContent =
+            (seasonLabels[currentLanguage] || seasonLabels.en)[crop.season] ||
+            crop.seasonLabel;
+        }
+
+        if (cropDetailsMsp) {
+          cropDetailsMsp.textContent =
+            "₹" + Number(crop.msp).toLocaleString("en-IN") +
+            (currentLanguage === "bn" ? " / কুইন্টাল" :
+             currentLanguage === "hi" ? " / क्विंटल" : " / quintal");
+        }
+
+        if (cropDetailsStatus) {
+          cropDetailsStatus.textContent =
+            currentLanguage === "bn" ? "🟢 সংগ্রহ খোলা" :
+            currentLanguage === "hi" ? "🟢 खरीद खुली है" :
+            "🟢 Procurement Open";
+        }
+
+        if (cropDetailsPeriod) {
+          cropDetailsPeriod.textContent = crop.period || "2026–27";
+        }
+
+        if (cropDetailsUpdated) {
+          cropDetailsUpdated.textContent =
+            window.__mspLastUpdated || "2026–27 official data";
+        }
+
+        if (cropDetailsBook) {
+          cropDetailsBook.dataset.crop = crop.name;
+        }
+      }
+
+      /* =========================================================
+         BACK TO CROPS
+         ========================================================= */
+
+      if (cropDetailsBack) {
+        cropDetailsBack.addEventListener("click", function () {
+          if (cropMspDetailsView) {
+            cropMspDetailsView.classList.add("hidden");
+          }
+
+          if (cropMspListView) {
+            cropMspListView.classList.remove("hidden");
+          }
+        });
+      }
+
+      /* =========================================================
+         OPEN FEATURE 01
+         ========================================================= */
+
+      if (cardCropMsp) {
+        cardCropMsp.addEventListener("click", function () {
+          openCropMspModal();
+        });
+      }
+
+      /* =========================================================
+         CLOSE BUTTON
+         ========================================================= */
+
+      if (cropMspClose) {
+        cropMspClose.addEventListener("click", function () {
+          closeCropMspModal();
+        });
+      }
+
+      /* =========================================================
+         CLICK OUTSIDE
+         ========================================================= */
+
+      if (cropMspOverlay) {
+        cropMspOverlay.addEventListener("click", function () {
+          closeCropMspModal();
+        });
+      }
+
+      /* =========================================================
+         ESCAPE KEY
+         ========================================================= */
+
+      document.addEventListener("keydown", function (event) {
+        if (
+          event.key === "Escape" &&
+          cropMspModal &&
+          !cropMspModal.classList.contains("hidden")
+        ) {
+          closeCropMspModal();
+        }
+      });
+
+      /* =========================================================
+         SEARCH
+         ========================================================= */
+
+      if (cropMspSearch) {
+        cropMspSearch.addEventListener("input", function () {
+          renderCropMspCards();
+        });
+      }
+
+      /* =========================================================
+         FILTERS
+         ========================================================= */
+
+      cropMspFilters.forEach(function (button) {
+        button.addEventListener("click", function () {
+          selectedCropSeason = button.dataset.filter;
+
+          cropMspFilters.forEach(function (item) {
+            item.classList.remove("active");
+          });
+
+          button.classList.add("active");
+
+          renderCropMspCards();
+        });
+      });
+
+      /* =========================================================
+   FEATURE 02 CONNECTION
+   ========================================================= */
+
+      if (cropDetailsBook) {
+        cropDetailsBook.addEventListener("click", function () {
+          const selectedCrop = cropDetailsBook.dataset.crop;
+
+          console.log("Selected crop for Feature 02:", selectedCrop);
+
+          // Save selected crop for Feature 02
+          localStorage.setItem("selectedCropForBooking", selectedCrop);
+
+          // Close Feature 01
+          closeCropMspModal();
+
+          // Open Feature 02 directly
+          const procurementSlotModal = document.getElementById(
+            "procurementSlotModal"
+          );
+
+          if (procurementSlotModal) {
+            procurementSlotModal.classList.remove("hidden");
+
+            document.body.style.overflow = "hidden";
+
+            // Show selected crop in Feature 02
+            const bookingCropName = document.getElementById("bookingCropName");
+
+            const bookingCropIcon = document.getElementById("bookingCropIcon");
+
+            const cropIcons = {
+              Rice: "🌾",
+              Jute: "🌿",
+              Maize: "🌽",
+              Potato: "🥔",
+    Gram: "🫘",
+              Wheat: "🌾",
+              Mustard: "🌱",
+              Groundnut: "🥜",
+              Sunflower: "🌻",
+            };
+
+            if (bookingCropName) {
+              bookingCropName.textContent = selectedCrop;
+            }
+
+            if (bookingCropIcon) {
+              bookingCropIcon.textContent = cropIcons[selectedCrop] || "🌾";
+            }
+
+            console.log("Feature 02 opened successfully.");
+          } else {
+            console.error("Feature 02 modal was not found in the HTML.");
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
